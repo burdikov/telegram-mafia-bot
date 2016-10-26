@@ -1,0 +1,12 @@
+c:\users\леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\AfiaBot.exe.config
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\AfiaBot.exe
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\AfiaBot.pdb
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\Newtonsoft.Json.dll
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\System.Net.Http.Formatting.dll
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\Telegram.Bot.dll
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\Newtonsoft.Json.xml
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\System.Net.Http.Formatting.xml
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\bin\Debug\Telegram.Bot.xml
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\obj\Debug\AfiaBot.csprojResolveAssemblyReference.cache
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\obj\Debug\AfiaBot.exe
+C:\Users\Леонид\documents\visual studio 2015\Projects\AfiaBot\AfiaBot\obj\Debug\AfiaBot.pdb

@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Telegram.Bot.Types;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AfiaBot
 {
     //TODO: изменить механику вывода имен игроков
-    class GameRoom
+    internal class GameRoom
     {
         const string str_players = "Игроки";
         const string str_id = "ID";
@@ -45,13 +46,7 @@ namespace AfiaBot
         private bool isStarted = false;
 
         public int ID { get; }
-        private long Admin
-        {
-            get
-            {
-                return members.Count > 0 ? members[0].Id : -1;
-            }
-        }
+        private long Admin => members.Count > 0 ? members[0].Id : -1;
         private List<Chat> members = new List<Chat>();
         private int[] conf = new int[] { 1,1,2,2,1,0,1,3 };
 
@@ -61,12 +56,12 @@ namespace AfiaBot
 
         static GameRoom()
         {
-            KeyboardButton [][] def = new KeyboardButton[2][];
+            var def = new KeyboardButton[2][];
             def[0] = new KeyboardButton[] { str_players, str_conf };
             def[1] = new KeyboardButton[] { str_exit, str_id };
             markupDefault = new ReplyKeyboardMarkup(def, true);
 
-            KeyboardButton [][] adm = new KeyboardButton[3][];
+            var adm = new KeyboardButton[3][];
             adm[0] = new KeyboardButton[] { str_newgame };
             adm[1] = new KeyboardButton[] { str_conf };
             adm[2] = new KeyboardButton[] { str_exit, str_id, str_players };
@@ -105,7 +100,7 @@ namespace AfiaBot
 
         public void HandleMessage(Message msg)
         {
-            long chatID = msg.Chat.Id;
+            var chatID = msg.Chat.Id;
 
             if (waitingForConfig && chatID == Admin)
             {
@@ -118,23 +113,23 @@ namespace AfiaBot
                 {
                     try
                     {
-                        string[] strmas = msg.Text.Split(';');
+                        var strmas = msg.Text.Split(';');
                         if (strmas.Length != 7)
                         {
                             throw new Exception();
                         }
 
-                        int[] mas = new int[8];
+                        var mas = new int[8];
                         mas[0] = 1;
 
-                        for (int i = 1; i < 8; i++)
+                        for (var i = 1; i < 8; i++)
                         {
                             mas[i] = Convert.ToInt32(strmas[i-1]);
                         }
                         this.conf = mas;
 
-                        string list = "Конфигурация принята.\nВ вашей игре будет следующее количество ролей:\n";
-                        for (int i = 0; i < 8; i++)
+                        var list = "Конфигурация принята.\nВ вашей игре будет следующее количество ролей:\n";
+                        for (var i = 0; i < 8; i++)
                         {
                             list += ((Role)i).ToString() + ": " + conf[i] + "\n";
                         }
@@ -144,9 +139,9 @@ namespace AfiaBot
                         waitingForConfig = false;
                     }
                     catch
-          {
-            Program.Bot.SendTextMessageAsync(chatID, "Неверная конфигурация. Попробуйте ещё раз.");
-          }
+                    {
+                        Program.Bot.SendTextMessageAsync(chatID, "Неверная конфигурация. Попробуйте ещё раз.");
+                    }
           
                         
                 }
@@ -166,18 +161,14 @@ namespace AfiaBot
                 case str_remaining:
                         if (isStarted && (chatID == leader))
                         {
-                            string remaining = "";
-                            for (int j = 0; j < deck.Count; j++)
-                            {
-                                remaining += "*"+deck[j].ToString() + "*\n";
-                            }
+                            var remaining = deck.Aggregate("", (current, role) => current + ("*" + role.ToString() + "*\n"));
                             Program.Bot.SendTextMessageAsync(chatID, remaining, false, true, 0,
                                 chatID == Admin ? markupAdmin : markupDefault, Telegram.Bot.Types.Enums.ParseMode.Markdown);
                         }
                         break;
                 case str_conf:
-                    string list = "*Текущая конфигурация:*\n";
-                    for (int k = 0; k < 8; k++)
+                    var list = "*Текущая конфигурация:*\n";
+                    for (var k = 0; k < 8; k++)
                     {
                         list += ((Role)k).ToString() + ": " + conf[k] + "\n";
                     }
@@ -198,13 +189,9 @@ namespace AfiaBot
                         false, false, 0, markupList);
                     break;
                 case str_list:
-                    string userlist = "";
-                    int i = 1;
-                    foreach (var member in members)
-                    {
-                        userlist += i++ + ". " + member.FirstName + "\n";
-                    }
-                    Program.Bot.SendTextMessageAsync(chatID, userlist, false, false, 0,
+                    var i = 1;
+                    var userList = members.Aggregate("", (current, member) => current + (i++ + ". " + member.FirstName + "\n"));
+                    Program.Bot.SendTextMessageAsync(chatID, userList, false, false, 0,
                         chatID == Admin ? markupAdmin : markupDefault);
                     break;
                 case str_back:
@@ -225,11 +212,11 @@ namespace AfiaBot
             this.roles = new Dictionary<long, Role>();
             this.deck = new List<Role>();
 
-            Random rnd = new Random(DateTime.Now.Millisecond);
+            var rnd = new Random(DateTime.Now.Millisecond);
 
-            for (int i = 1; i < conf.Length; i++)
+            for (var i = 1; i < conf.Length; i++)
             {
-                for (int j = 0; j < conf[i]; j++)
+                for (var j = 0; j < conf[i]; j++)
                 {
                     deck.Add((Role)i);
                 }
@@ -241,19 +228,19 @@ namespace AfiaBot
             roles.Add(leader, (Role)0);
             localList.RemoveAll(x => x.Id == leader);
 
-            for (int i = 0; i < localList.Count; i++)
+            foreach (var chatMember in localList)
             {
-                int index = rnd.Next(deck.Count);
-                roles.Add(localList[i].Id, deck[index]);
+                var index = rnd.Next(deck.Count);
+                roles.Add(chatMember.Id, deck[index]);
                 deck.RemoveAt(index);
             }
 
             isStarted = true;
 
-            for (int i = 0; i < members.Count; i++)
+            foreach (var member in members)
             {
-                Program.Bot.SendTextMessageAsync(members[i].Id, "Новая игра началась!", false, false, 0, 
-                    members[i].Id == leader ? markupShowRemaining : markupShowMe);
+                Program.Bot.SendTextMessageAsync(member.Id, "Новая игра началась!", false, false, 0, 
+                    member.Id == leader ? markupShowRemaining : markupShowMe);
             }
 
             Program.Bot.SendTextMessageAsync(leader, "Вы ведущий!", false, false, 0);
@@ -285,7 +272,7 @@ namespace AfiaBot
 
         private void LeaveRoom(long chatId)
         {
-            bool admin = chatId == Admin;
+            var admin = chatId == Admin;
             lock (this)
             {
                 members.RemoveAll(x => x.Id == chatId);

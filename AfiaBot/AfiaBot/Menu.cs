@@ -10,7 +10,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace AfiaBot
 {
-    class Menu
+    internal static class Menu
     {
         const string str_newroom = "Создать комнату";
         const string str_joinroom = "Присоединиться";
@@ -32,7 +32,7 @@ namespace AfiaBot
 
             waitingForRoomId = false;
 
-            KeyboardButton[][] menu = new KeyboardButton[2][];
+            var menu = new KeyboardButton[2][];
             menu[0] = new KeyboardButton[] { str_newroom };
             menu[1] = new KeyboardButton[] { str_joinroom };
             markupMenu = new ReplyKeyboardMarkup(menu, true);
@@ -46,7 +46,7 @@ namespace AfiaBot
 
         public static void HandleMessage(Telegram.Bot.Types.Message msg)
         {
-            long chatId = msg.Chat.Id;
+            var chatId = msg.Chat.Id;
 
             if (playerRoom.ContainsKey(chatId))
             {
@@ -60,7 +60,7 @@ namespace AfiaBot
                     {
                         case str_newroom:
                             {
-                                GameRoom room = new GameRoom(msg.Chat);
+                                var room = new GameRoom(msg.Chat);
                                 rooms.Add(room.ID, room);
                                 playerRoom.Add(chatId, room.ID);
                                 break;
@@ -97,7 +97,7 @@ namespace AfiaBot
                             {
                                 try
                                 {
-                                    int roomId = Convert.ToInt32(msg.Text);
+                                    var roomId = Convert.ToInt32(msg.Text);
                                     rooms[roomId].EnterRoom(msg.Chat);
                                     playerRoom.Add(chatId, roomId);
                                     waitingForRoomId = false;
@@ -112,10 +112,10 @@ namespace AfiaBot
                                     Program.Bot.SendTextMessageAsync(chatId, "Такой комнаты нет. Попробуйте другое число.",
                                         false,false,0,markupCancel);
                                 }
-                catch
-                {
-                  Program.Bot.SendTextMessageAsync(chatId, "Пишёл нахув, сральник");
-                }
+                                catch
+                                {
+                                    Program.Bot.SendTextMessageAsync(chatId, "Пишёл нахув, сральник");
+                                }
                                 break;
                             }
                     }

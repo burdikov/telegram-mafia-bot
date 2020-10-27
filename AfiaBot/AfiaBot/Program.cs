@@ -3,14 +3,14 @@ using Telegram.Bot;
 
 namespace AfiaBot
 {
-    class Program
+    internal static class Program
     {
         public static TelegramBotClient Bot { get; private set; }
-        private static string token = "289179199:AAFbRCxuvIoX_Cg0TpowgDLc5dlnLYuxaPA";
+        private const string Token = "289179199:AAFbRCxuvIoX_Cg0TpowgDLc5dlnLYuxaPA"; //need to delete
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            Bot = new TelegramBotClient(token);
+            Bot = new TelegramBotClient(Token);
             Bot.OnMessage += Bot_OnMessage;
             Bot.StartReceiving();
             
